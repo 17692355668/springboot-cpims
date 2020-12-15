@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.javakc.springbootcpims.modules.user.dao.UserDao">
+
+
+    <insert id="insert">
+        insert into cpims_basic_rbac_user(name, user_number, user_state, login_name, login_pass, phone, email)
+        value (#{name},#{userNumber},#{userState},#{loginName},#{loginPass},#{phone},#{email})
+    </insert>
+
+    <select id="loadUserByUsername" resultType="user">
+        select id,login_pass,user_state from cpims_basic_rbac_user where login_name=#{name}
+    </select>
+
+    <select id="loadPermissionByUsername" resultType="String">
+       SELECT permission.permission_code from cpims_basic_rbac_permission permission,cpims_basic_rbac_role_permission role_permission
+     WHERE permission.id = role_permission.permission_id and role_permission.role_id IN
+        (SELECT role.id FROM cpims_basic_rbac_user user,cpims_basic_rbac_use_role user_role,cpims_basic_rbac_role role
+            where `user`.id =user_role.user_id and user_role.role_id =role.id and `user`.login_name = #{name})
+    </select>
+
+</mapper>

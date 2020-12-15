@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.javakc.springbootcpims.modules.dictionary.dao.DictionaryDao">
+
+
+<!--
+接管mybatis默认的缓存处理机制
+查询数据库后把对象经过序列化，写入到运行内存
+     1.对象要求实现序列化接口
+     2.内存中数据随服务器关闭而释放
+-->
+    <cache type="com.javakc.springbootcpims.common.datasource.mybatis.MybatisCache"/>
+    <sql id="all">
+        id, system_name, group_name, real_value, show_value, sort_value, remarks, revision, created_by, created_time, updated_by, updated_time
+    </sql>
+
+    <select id="queryAll" resultType="dictionary">
+        select <include refid="all"/> from cpims_basic_data_dictionary
+    </select>
+
+    <select id="queryById" resultType="dictionary">
+        select <include refid="all"/> from cpims_basic_data_dictionary where id=#{id}
+    </select>
+
+    <insert id="insert">
+        insert into cpims_basic_data_dictionary(system_name, group_name, real_value, show_value, sort_value, remarks)
+        value(#{systemName},#{groupName},#{realValue},#{showValue},#{entity.sortValue},#{remarks})
+    </insert>
+
+    <insert id="inserts">
+        insert into cpims_basic_data_dictionary(system_name, group_name, real_value, show_value, sort_value, remarks)
+        value
+        <foreach collection="list" item="entity" separator=",">
+            (#{entity.systemName},#{entity.groupName},#{entity.realValue},#{entity.showValue},#{entity.sortValue},#{entity.remarks})
+        </foreach>
+    </insert>
+
+    <update id="update">
+        update cpims_basic_data_dictionary set
+        system_name=#{systemName}, group_name=#{groupName}, real_value=#{realValue},
+         show_value=#{showValue}, sort_value=#{sortValue}, remarks=#{remarks}
+         where id=#{id}
+    </update>
+
+    <delete id="delete">
+        delete from cpims_basic_data_dictionary where id=#{id}
+    </delete>
+
+    <delete id="deletes">
+        delete from cpims_basic_data_dictionary where id in
+        <foreach collection="list" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+
+</mapper>
